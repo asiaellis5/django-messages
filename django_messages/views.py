@@ -1,6 +1,5 @@
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
@@ -27,9 +26,9 @@ def inbox(request, template_name='django_messages/inbox.html'):
         ``template_name``: name of the template to use.
     """
     message_list = Message.objects.inbox_for(request.user)
-    return render_to_response(template_name, {
+    return render(request, template_name, {
         'message_list': message_list,
-    }, context_instance=RequestContext(request))
+    })
 
 @login_required
 def outbox(request, template_name='django_messages/outbox.html'):
@@ -39,9 +38,9 @@ def outbox(request, template_name='django_messages/outbox.html'):
         ``template_name``: name of the template to use.
     """
     message_list = Message.objects.outbox_for(request.user)
-    return render_to_response(template_name, {
+    return render(request, template_name, {
         'message_list': message_list,
-    }, context_instance=RequestContext(request))
+    })
 
 @login_required
 def trash(request, template_name='django_messages/trash.html'):
@@ -53,9 +52,9 @@ def trash(request, template_name='django_messages/trash.html'):
     by sender and recipient.
     """
     message_list = Message.objects.trash_for(request.user)
-    return render_to_response(template_name, {
+    return render(request, template_name, {
         'message_list': message_list,
-    }, context_instance=RequestContext(request))
+    })
 
 @login_required
 def compose(request, recipient=None, form_class=ComposeForm,
@@ -87,9 +86,9 @@ def compose(request, recipient=None, form_class=ComposeForm,
         if recipient is not None:
             recipients = [u for u in User.objects.filter(**{'%s__in' % get_username_field(): [r.strip() for r in recipient.split('+')]})]
             form.fields['recipient'].initial = recipients
-    return render_to_response(template_name, {
+    return render(request, template_name, {
         'form': form,
-    }, context_instance=RequestContext(request))
+    })
 
 @login_required
 def reply(request, message_id, form_class=ComposeForm,
@@ -123,9 +122,9 @@ def reply(request, message_id, form_class=ComposeForm,
             'subject': subject_template % {'subject': parent.subject},
             'recipient': [parent.sender,]
             })
-    return render_to_response(template_name, {
+    return render(request, template_name, {
         'form': form,
-    }, context_instance=RequestContext(request))
+    })
 
 @login_required
 def delete(request, message_id, success_url=None):
@@ -220,5 +219,4 @@ def view(request, message_id, form_class=ComposeForm, quote_helper=format_quote,
             'recipient': [message.sender,]
             })
         context['reply_form'] = form
-    return render_to_response(template_name, context,
-        context_instance=RequestContext(request))
+    return render(request, template_name, context)
