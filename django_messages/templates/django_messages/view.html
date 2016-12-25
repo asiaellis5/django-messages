@@ -3,9 +3,10 @@
 
 {% block content %}
 <h1>{% trans "View Message" %}</h1>
-<dl class="message-headers">
+
+<dl class="message-headers dl-horizontal">
     <dt>{% trans "Subject" %}</dt>
-    <dd><strong>{{ message.subject }}</strong></dd>
+    <dd class="lead">{{ message.subject }}</dd>
     <dt>{% trans "Sender" %}</dt>
     <dd>{{ message.sender }}</dd>
     <dt>{% trans "Date" %} </dt>
@@ -13,8 +14,12 @@
     <dt>{% trans "Recipient" %}</dt>
     <dd>{{ message.recipient }}</dd>
 </dl>
-{{ message.body|linebreaksbr }}<br><br>
 
+<blockquote>
+	<p>{{ message.body|linebreaksbr }}</p>
+</blockquote>
+
+<p>
 {% ifequal message.recipient.pk user.pk %}
 <a href="{% url 'messages_reply' message.id %}" class="btn btn-default">
 	<i class="glyphicon glyphicon-share-alt"></i>
@@ -23,17 +28,19 @@
 <a href="{% url 'messages_delete' message.id %}" class="btn btn-default">
 	<i class="glyphicon glyphicon-trash"></i>
 	{% trans "Delete" %}</a>
+</p>
 
-{% comment %}Example reply_form integration
 {% if reply_form %}
-<h1>{% trans "Compose reply"%}</h1>
+<h2>{% trans "Compose reply"%}</h2>
 <form action="{% url 'messages_reply' message.id %}" method="post">
 {% csrf_token %}
 <ul>
 {{ reply_form.as_ul }}
 </ul>
-<button type="submit" class="btn">{% trans "Send" %}</button>
+<button type="submit" class="btn btn-success btn-lg">
+	<i class="glyphicon glyphicon-send"></i>
+	{% trans "Send" %}</button>
 </form>
 {% endif %}
-{% endcomment %}
+
 {% endblock %}
