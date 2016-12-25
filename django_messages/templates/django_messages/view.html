@@ -16,11 +16,11 @@
 {{ message.body|linebreaksbr }}<br><br>
 
 {% ifequal message.recipient.pk user.pk %}
-<a href="{% url 'messages_reply' message.id %}" class="btn">
+<a href="{% url 'messages_reply' message.id %}" class="btn btn-default">
 	<i class="glyphicon glyphicon-share-alt"></i>
 	{% trans "Reply" %}</a>
 {% endifequal %}
-<a href="{% url 'messages_delete' message.id %}" class="btn">
+<a href="{% url 'messages_delete' message.id %}" class="btn btn-default">
 	<i class="glyphicon glyphicon-trash"></i>
 	{% trans "Delete" %}</a>
 
