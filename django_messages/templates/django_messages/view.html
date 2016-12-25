@@ -2,17 +2,13 @@
 {% load i18n %}
 
 {% block content %}
-<h1>{% trans "View Message" %}</h1>
+<h1>{% trans "Message" %}: {{ message.subject }}</h1>
 
 <dl class="message-headers dl-horizontal">
-    <dt>{% trans "Subject" %}</dt>
-    <dd class="lead">{{ message.subject }}</dd>
     <dt>{% trans "Sender" %}</dt>
     <dd>{{ message.sender }}</dd>
     <dt>{% trans "Date" %} </dt>
     <dd>{{ message.sent_at|date:_("DATETIME_FORMAT")}}</dd>
-    <dt>{% trans "Recipient" %}</dt>
-    <dd>{{ message.recipient }}</dd>
 </dl>
 
 <blockquote>
@@ -21,9 +17,11 @@
 
 <p>
 {% ifequal message.recipient.pk user.pk %}
-<a href="{% url 'messages_reply' message.id %}" class="btn btn-default">
-	<i class="glyphicon glyphicon-share-alt"></i>
-	{% trans "Reply" %}</a>
+	{% if not reply_form %}
+	<a href="{% url 'messages_reply' message.id %}" class="btn btn-default">
+		<i class="glyphicon glyphicon-share-alt"></i>
+		{% trans "Reply" %}</a>
+	{% endif %}
 {% endifequal %}
 <a href="{% url 'messages_delete' message.id %}" class="btn btn-default">
 	<i class="glyphicon glyphicon-trash"></i>
