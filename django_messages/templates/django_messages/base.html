@@ -3,12 +3,22 @@
 {% block content %}
 {% endblock %}
 {% block sidebar %}
+
+{% url 'messages_inbox' as inbox_url %}
+{% url 'messages_outbox' as outbox_url %}
+{% url 'messages_compose' as compose_url %}
+{% url 'messages_trash' as trash_url %}
+
 <nav class="messages_subnav">
-<ul>
-    <li><a href="{% url 'messages_inbox' %} ">{% trans "Inbox" %}</a></li>
-    <li><a href="{% url 'messages_outbox' %} ">{% trans "Sent Messages" %}</a></li>
-    <li><a href="{% url 'messages_compose' %} ">{% trans "New Message" %}</a></li>
-    <li><a href="{% url 'messages_trash' %} ">{% trans "Trash" %}</a></li>
+<ul class="nav nav-tabs">
+    <li{% if request.path == inbox_url %} class="active"{% endif %}>
+		<a href="{{ inbox_url }}">{% trans "Inbox" %}</a></li>
+    <li{% if request.path == outbox_url %} class="active"{% endif %}>
+		<a href="{{ outbox_url }}">{% trans "Sent Messages" %}</a></li>
+    <li{% if request.path == compose_url %} class="active"{% endif %}>
+		<a href="{{ compose_url }}">{% trans "New Message" %}</a></li>
+    <li{% if request.path == trash_url %} class="active"{% endif %}>
+		<a href="{{ trash_url }}">{% trans "Trash" %}</a></li>
 </ul>
 </nav>
 {% endblock %}
