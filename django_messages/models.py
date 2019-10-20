@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import signals
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -51,9 +52,15 @@ class Message(models.Model):
     """
     subject = models.CharField(_("Subject"), max_length=140)
     body = models.TextField(_("Body"))
-    sender = models.ForeignKey(AUTH_USER_MODEL, related_name='sent_messages', verbose_name=_("Sender"))
-    recipient = models.ForeignKey(AUTH_USER_MODEL, related_name='received_messages', null=True, blank=True, verbose_name=_("Recipient"))
-    parent_msg = models.ForeignKey('self', related_name='next_messages', null=True, blank=True, verbose_name=_("Parent message"))
+    sender = models.ForeignKey(AUTH_USER_MODEL, related_name='sent_messages',
+                               on_delete=models.CASCADE,
+                               verbose_name=_("Sender"))
+    recipient = models.ForeignKey(AUTH_USER_MODEL, related_name='received_messages',
+                                  null=True, blank=True, on_delete=models.CASCADE,
+                                  verbose_name=_("Recipient"))
+    parent_msg = models.ForeignKey('self', related_name='next_messages',
+                                   null=True, blank=True, on_delete=models.CASCADE,
+                                   verbose_name=_("Parent message"))
     sent_at = models.DateTimeField(_("sent at"), null=True, blank=True)
     read_at = models.DateTimeField(_("read at"), null=True, blank=True)
     replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
@@ -78,8 +85,7 @@ class Message(models.Model):
         return self.subject
 
     def get_absolute_url(self):
-        return ('messages_detail', [self.id])
-    get_absolute_url = models.permalink(get_absolute_url)
+        return reverse('messages_detail', [self.id])
 
     def save(self, **kwargs):
         if not self.id:
